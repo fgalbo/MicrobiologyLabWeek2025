@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Microbiology Lab Week Game 2025</title>
     <!-- Favicon Link -->
-    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Ccircle%20cx='32'%20cy='32'%20r='30'%20fill='%23E0F8FF'%20stroke='%23A0D8E8'%20stroke-width='2'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='26'%20fill='%23FFF8DC'%20opacity='0.8'/%3E%3Ccircle%20cx='25'%20cy='30'%20r='5'%20fill='%23DC3545'/%3E%3Ccircle%20cx='42'%20cy='40'%20r='4'%20fill='%230056B3'/%3E%3C/svg%3E" type="image/svg+xml">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Ccircle%20cx='32'%20cy='32'%20r='30'%20fill='%23E0F8FF'%20stroke='%23A0D8E8'%20stroke-width='2'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='26'%20fill='%23FFF8DC'%20opacity='0.8'/%3E%3Ccircle%20cx='25'%20cy='30'%20r='5'%20fill='%23DC3545'/%3E%3Ccircle%20cx='42'%20cy='40'%20r='4'%20fill='%230056B3'/%3E%3C/svg%3E" type="image/svg+xml" sizes="any">
     <!-- End Favicon Link -->
     <style>
         /* --- Basic Reset & Body --- */
@@ -14,15 +14,17 @@
             font-family: sans-serif; display: flex; justify-content: center; align-items: center;
             min-height: 100vh; background-color: #f0f8ff; color: #333;
             padding: 20px; overflow: hidden;
+             /* Prevent pull-to-refresh and other touch actions on body */
+             overscroll-behavior-y: contain;
         }
 
         /* --- Game Container --- */
         #game-container {
             background-color: #ffffff; padding: 0; border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); text-align: center;
-            width: 90%; max-width: 850px; /* Slightly wider for banner */
-            position: relative; overflow: hidden; min-height: 600px; /* Increased min-height */
-            height: 90vh; max-height: 750px; /* Increased max-height */
+            width: 90%; max-width: 850px;
+            position: relative; overflow: hidden; min-height: 600px;
+            height: 90vh; max-height: 750px;
             display: flex; flex-direction: column;
         }
 
@@ -31,7 +33,7 @@
             display: none; flex-direction: column; align-items: center;
             gap: 15px; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             padding: 30px; overflow-y: auto; background-color: #ffffff;
-            justify-content: center; /* Default to center */
+            justify-content: center;
         }
         .screen.active { display: flex; z-index: 1; }
         h1 { font-size: 1.8em; color: #0056b3; margin-bottom: 10px; }
@@ -41,11 +43,7 @@
 
         /* --- Input & Buttons --- */
         input[type="text"] { padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 80%; max-width: 300px; font-size: 1em; }
-        button {
-            padding: 12px 25px; font-size: 1em; background-color: #007bff; color: white;
-            border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;
-            margin-top: 5px; margin-bottom: 5px;
-        }
+        button { padding: 12px 25px; font-size: 1em; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease; margin-top: 5px; margin-bottom: 5px; }
         button:hover { background-color: #0056b3; }
         button.secondary { background-color: #6c757d; }
         button.secondary:hover { background-color: #5a6268; }
@@ -66,128 +64,45 @@
 
         /* --- Simple Intro Screens --- */
          #shift-start-screen, #alert-screen, #fix-instruction-screen, #fix-confirmation-screen {
-             background-color: #f8f9fa; /* Simple light background */
+             background-color: #f8f9fa;
          }
 
         /* --- Prepare Smear Screen --- */
         #prepare-smear-screen { justify-content: flex-start; align-items: center;}
-        #prep-container {
-            display: flex; justify-content: space-around; align-items: flex-end;
-            width: 90%; gap: 30px; /* Increased gap */
-            margin-top: 20px; margin-bottom: 30px; /* Added bottom margin */
-            flex-wrap: wrap;
-            min-height: 100px; /* Ensure space */
-        }
-        .prep-item { /* Base style for draggable items */
-            padding: 5px; /* Reduced padding for SVGs */
-            border: 1px solid transparent; /* Make border transparent initially */
-            border-radius: 8px;
-            background-color: transparent; /* Make background transparent initially */
-            cursor: grab; text-align: center;
-            transition: opacity 0.3s ease, transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease; /* Added transitions */
-            user-select: none;
-            display: flex; /* Use flex for centering content */
-            flex-direction: column;
-            align-items: center;
-            min-width: 80px; /* Minimum width */
-        }
-         /* Style specific items */
-         #prep-wipe-container { background-color: #e9ecef; border-color: #ccc; padding: 10px;} /* Keep wipe boxy */
-         /* Style for SVGs inside prep items */
-         .prep-item svg {
-              width: 60px; /* Control SVG size */
-              height: 80px;
-              display: block;
-              margin-bottom: 5px; /* Space below SVG */
-         }
+        #prep-container { display: flex; justify-content: space-around; align-items: flex-end; width: 90%; gap: 30px; margin-top: 20px; margin-bottom: 30px; flex-wrap: wrap; min-height: 100px; }
+        .prep-item { padding: 5px; border: 1px solid transparent; border-radius: 8px; background-color: transparent; cursor: grab; text-align: center; transition: opacity 0.3s ease, transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease; user-select: none; display: flex; flex-direction: column; align-items: center; min-width: 80px; touch-action: none; /* Prevent scrolling on touch drag */ }
+         #prep-wipe-container { background-color: #e9ecef; border-color: #ccc; padding: 10px;}
+         .prep-item svg { width: 60px; height: 80px; display: block; margin-bottom: 5px; }
          #prep-needle-svg { height: 70px; width: 20px; }
          #prep-bottle-svg { width: 70px; height: 90px; }
-
-         /* Style for text labels */
-         .prep-item .prep-label {
-             font-size: 0.8em;
-             color: #333;
-             font-weight: bold;
-         }
-
+         .prep-item .prep-label { font-size: 0.8em; color: #333; font-weight: bold; }
         .prep-item:active { cursor: grabbing; transform: scale(1.05); }
-        /* Make 'used' visually distinct and non-interactive */
-        .prep-item.used {
-             opacity: 0.4;
-             cursor: default;
-             pointer-events: none; /* Disable interaction completely */
-             background-color: #e9ecef !important; /* Keep background consistent when used */
-             border-color: #ddd !important;
-        }
-        /* Keep wipe background when used */
+        .prep-item.used { opacity: 0.4; cursor: default; pointer-events: none; background-color: #e9ecef !important; border-color: #ddd !important; }
          #prep-wipe-container.used { background-color: #e9ecef; }
-
-        /* Highlight potential drop targets */
-        .prep-item.drag-over-target,
-        #smear-graphic-target.drag-over-target {
-             border: 2px dashed #007bff !important; /* Force highlight */
-             background-color: #e7f3ff !important; /* Force highlight */
-        }
-
-        /* Separate target for the final smear */
-        #smear-graphic-target {
-             width: 200px; /* Size of the slide */
-             height: 80px;
-             border: 3px dashed #6c757d;
-             border-radius: 10px;
-             display: flex; /* Use flex for positioning slide graphic */
-             justify-content: center;
-             align-items: center;
-             background-color: #e9ecef;
-             margin-top: 20px; /* Space above */
-             transition: background-color 0.3s ease, border-color 0.3s ease, visibility 0s linear 0.5s, opacity 0.5s ease-in-out;
-             position: relative; /* Needed for absolute positioning inside */
-             overflow: hidden; /* Hide overflow */
-             padding: 5px;
-              /* Hide initially */
-             visibility: hidden;
-             opacity: 0;
-        }
-         #smear-graphic-target.visible {
-             visibility: visible;
-             opacity: 1;
-             transition-delay: 0s; /* Make appear immediately */
-         }
-
-         /* Actual slide graphic inside the target */
-         #smear-graphic-target #smear-slide-visual {
-             width: 180px; height: 65px; background-color: rgba(212, 241, 249, 0.9);
-             border: 1px solid #a0d8e8; border-radius: 5px; position: relative;
-             box-shadow: inset 0 0 5px rgba(255,255,255,0.5);
-         }
-         #smear-graphic-target #smear-slide-visual .smear-spot { /* The actual smear */
-              position: absolute; left: 30px; top: 20px; width: 40px; height: 25px;
-              background-color: #f8d7da; border-radius: 30%; opacity: 0; /* Hidden until created */
-              transition: opacity 0.5s ease;
-         }
-          #smear-graphic-target #smear-slide-visual .smear-spot.visible {
-               opacity: 0.8;
-          }
-
+        .prep-item.drag-over-target, #smear-graphic-target.drag-over-target { border: 2px dashed #007bff !important; background-color: #e7f3ff !important; }
+        #smear-graphic-target { width: 200px; height: 80px; border: 3px dashed #6c757d; border-radius: 10px; display: flex; justify-content: center; align-items: center; background-color: #e9ecef; margin-top: 20px; transition: background-color 0.3s ease, border-color 0.3s ease, visibility 0s linear 0.5s, opacity 0.5s ease-in-out; position: relative; overflow: hidden; padding: 5px; visibility: hidden; opacity: 0; }
+         #smear-graphic-target.visible { visibility: visible; opacity: 1; transition-delay: 0s; }
+         #smear-graphic-target #smear-slide-visual { width: 180px; height: 65px; background-color: rgba(212, 241, 249, 0.9); border: 1px solid #a0d8e8; border-radius: 5px; position: relative; box-shadow: inset 0 0 5px rgba(255,255,255,0.5); }
+         #smear-graphic-target #smear-slide-visual .smear-spot { position: absolute; left: 30px; top: 20px; width: 40px; height: 25px; background-color: #f8d7da; border-radius: 30%; opacity: 0; transition: opacity 0.5s ease; }
+          #smear-graphic-target #smear-slide-visual .smear-spot.visible { opacity: 0.8; }
         #prep-feedback { margin-top: 20px; font-weight: bold; min-height: 1.5em;}
         #prep-feedback.error { color: #dc3545; }
         #prep-feedback.success { color: #28a745; }
-
 
         /* --- Fixing Animation --- */
         #fix-confirmation-screen #fixed-slide-graphic { width: 180px; height: 65px; background-color: #d4f1f9; border: 1px solid #a0d8e8; border-radius: 5px; position: relative; box-shadow: inset 0 0 5px rgba(255,255,255,0.5); overflow: hidden; }
         #fix-confirmation-screen #fixed-slide-graphic::after { content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(173, 216, 230, 0.7), rgba(173, 216, 230, 0)); animation: methanol-spray 0.8s ease-out forwards; opacity: 0; }
         @keyframes methanol-spray { 0% { transform: translateY(0); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(100%); opacity: 0; } }
 
-
         /* --- Phase 1: Gram Stain --- */
         #game-phase-1.active { background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><defs><pattern id="benchPattern" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M0 0h20v20H0z" fill="%23f0f0f0"/><path d="M0 0h1v20H0zm10 0h1v20h-1z M0 0h20v1H0zm0 10h20v1H0z" fill="%23dcdcdc"/></pattern></defs><rect width="100%" height="100%" fill="url(%23benchPattern)"/></svg>'); background-size: auto; background-position: center center; background-repeat: repeat; z-index: 2; justify-content: flex-start; }
         #phase-1-content { background-color: rgba(255, 255, 255, 0.7); padding: 20px; border-radius: 8px; width: 95%; display: flex; justify-content: space-around; align-items: flex-start; gap: 20px; flex-wrap: wrap; margin-top: 10px; }
         #reagents { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 15px; border: 1px dashed #aaa; border-radius: 5px; background-color: rgba(248, 249, 250, 0.95); min-height: auto; align-items: flex-end; width: 100%; max-width: 420px; }
         /* Reagent Bottle Styling */
-        .reagent { display: flex; flex-direction: column; align-items: center; cursor: grab; user-select: none; width: 75px; transition: opacity 0.3s ease; margin-bottom: 5px; } .reagent:active { cursor: grabbing; transform: scale(1.05); } .reagent.used { opacity: 0.4; cursor: default; pointer-events: none;} .bottle-neck { width: 22px; height: 13px; background-color: #a9a9a9; border: 1px solid #555; border-bottom: none; border-radius: 5px 5px 0 0; } .bottle-body { width: 45px; height: 65px; border: 1px solid #666; border-top: none; border-radius: 0 0 8px 8px; position: relative; background-color: #e0e0e0; } .reagent-label { margin-top: 4px; font-size: 0.7em; text-align: center; color: #333; font-weight: bold; max-width: 100%; overflow-wrap: break-word; } #reagent-cv .bottle-body { background-color: #8a2be2; } #reagent-iodine .bottle-body { background-color: #a0522d; } #reagent-decolorizer .bottle-body { background-color: rgba(240, 248, 255, 0.8); border: 1px solid #aaa; } #reagent-safranin .bottle-body { background-color: #ff69b4; }
+        .reagent { display: flex; flex-direction: column; align-items: center; cursor: grab; user-select: none; width: 75px; transition: opacity 0.3s ease; margin-bottom: 5px; touch-action: none; /* Prevent scrolling on touch drag */ }
+        .reagent:active { cursor: grabbing; transform: scale(1.05); } .reagent.used { opacity: 0.4; cursor: default; pointer-events: none;} .bottle-neck { width: 22px; height: 13px; background-color: #a9a9a9; border: 1px solid #555; border-bottom: none; border-radius: 5px 5px 0 0; } .bottle-body { width: 45px; height: 65px; border: 1px solid #666; border-top: none; border-radius: 0 0 8px 8px; position: relative; background-color: #e0e0e0; } .reagent-label { margin-top: 4px; font-size: 0.7em; text-align: center; color: #333; font-weight: bold; max-width: 100%; overflow-wrap: break-word; } #reagent-cv .bottle-body { background-color: #8a2be2; } #reagent-iodine .bottle-body { background-color: #a0522d; } #reagent-decolorizer .bottle-body { background-color: rgba(240, 248, 255, 0.8); border: 1px solid #aaa; } #reagent-safranin .bottle-body { background-color: #ff69b4; }
         /* Slide Area Styling */
-        #slide-container { display: flex; flex-direction: column; align-items: center; gap: 10px; background-color: rgba(240, 248, 255, 0.95); padding: 15px; border-radius: 8px; width: auto; min-width: 260px; } #slide-dropzone { width: 250px; height: 120px; border: 3px dashed #007bff; border-radius: 10px; display: flex; justify-content: center; align-items: center; background-color: transparent; transition: background-color 0.3s ease, border-color 0.3s ease; position: relative; overflow: hidden; padding: 10px; } #slide-dropzone.drag-over { background-color: rgba(204, 229, 255, 0.7); border-color: #0056b3; } #slide-graphic { width: 180px; height: 65px; background-color: rgba(212, 241, 249, 0.9); border: 1px solid #a0d8e8; border-radius: 5px; position: relative; box-shadow: inset 0 0 5px rgba(255,255,255,0.5); } #frosted-end { position: absolute; right: 5px; top: 5px; bottom: 5px; width: 40px; background-color: rgba(255, 255, 255, 0.7); border-radius: 3px; pointer-events: none; } #stained-area { position: absolute; left: 30px; top: 20px; width: 40px; height: 25px; background-color: transparent; border-radius: 30%; opacity: 0.8; transition: background-color 0.5s ease; /* Default transition */ pointer-events: none; } #slide-dropzone p.drop-instruction { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: rgba(0, 0, 0, 0.5); font-style: italic; z-index: 1; pointer-events: none; display: block; transition: color 0.3s ease; } #slide-dropzone.drag-over p.drop-instruction { color: rgba(0, 86, 179, 0.8); } #slide-dropzone.has-content p.drop-instruction { display: none; } #stain-status { font-weight: bold; padding: 5px 10px; border-radius: 3px; width: 100%; margin-top: 5px; opacity: 0; transition: opacity 0.5s ease, background-color 0.5s ease; min-height: 1.5em; text-align: center; background-color: rgba(255,255,255,0.8); } #stain-status.success { background-color: #d4edda; color: #155724; opacity: 1; } #stain-status.error { background-color: #f8d7da; color: #721c24; opacity: 1; }
+        #slide-container { display: flex; flex-direction: column; align-items: center; gap: 10px; background-color: rgba(240, 248, 255, 0.95); padding: 15px; border-radius: 8px; width: auto; min-width: 260px; } #slide-dropzone { width: 250px; height: 120px; border: 3px dashed #007bff; border-radius: 10px; display: flex; justify-content: center; align-items: center; background-color: transparent; transition: background-color 0.3s ease, border-color 0.3s ease; position: relative; overflow: hidden; padding: 10px; } #slide-dropzone.drag-over { background-color: rgba(204, 229, 255, 0.7); border-color: #0056b3; } #slide-graphic { width: 180px; height: 65px; background-color: rgba(212, 241, 249, 0.9); border: 1px solid #a0d8e8; border-radius: 5px; position: relative; box-shadow: inset 0 0 5px rgba(255,255,255,0.5); } #frosted-end { position: absolute; right: 5px; top: 5px; bottom: 5px; width: 40px; background-color: rgba(255, 255, 255, 0.7); border-radius: 3px; pointer-events: none; } #stained-area { position: absolute; left: 30px; top: 20px; width: 40px; height: 25px; background-color: transparent; border-radius: 30%; opacity: 0.8; transition: background-color 0.5s ease; pointer-events: none; } #slide-dropzone p.drop-instruction { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: rgba(0, 0, 0, 0.5); font-style: italic; z-index: 1; pointer-events: none; display: block; transition: color 0.3s ease; } #slide-dropzone.drag-over p.drop-instruction { color: rgba(0, 86, 179, 0.8); } #slide-dropzone.has-content p.drop-instruction { display: none; } #stain-status { font-weight: bold; padding: 5px 10px; border-radius: 3px; width: 100%; margin-top: 5px; opacity: 0; transition: opacity 0.5s ease, background-color 0.5s ease; min-height: 1.5em; text-align: center; background-color: rgba(255,255,255,0.8); } #stain-status.success { background-color: #d4edda; color: #155724; opacity: 1; } #stain-status.error { background-color: #f8d7da; color: #721c24; opacity: 1; }
 
         /* --- Phase 2: Microscope Effect --- */
         #game-phase-2.active { background-color: #000000; color: #e0e0e0; z-index: 10; justify-content: center; }
@@ -273,6 +188,22 @@
 
     </div>
 
+    <!-- Polyfill for mobile drag drop -->
+    <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=Element.prototype.closest%2CCustomEvent"></script>
+    <!-- Mobile Drag Drop Script -->
+    <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/dist/mobile-drag-drop.min.js"></script>
+    <script>
+        // Initialize the mobile drag drop polyfill
+         // Call this after the page is loaded (hence inside DOMContentLoaded or after the script include)
+         // It's generally safe to call it right away if included at the end.
+        MobileDragDrop.polyfill({
+             // Use this to force css dragged state
+             forceApply: true,
+              // Specifies what data transfer property to use for touch (default is 'move')
+              // dragImageTranslateOverride: MobileDragDrop.scrollBehaviourDragImageTranslateOverride
+        });
+    </script>
+    <!-- Main Game Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- DOM Elements ---
@@ -297,13 +228,13 @@
             const prepItems = [prepWipeContainer, prepNeedleContainer, prepBottleContainer];
             const smearGraphicTarget = document.getElementById('smear-graphic-target');
             const smearSlideVisual = document.getElementById('smear-slide-visual');
-            const smearSpot = smearSlideVisual.querySelector('.smear-spot');
+            const smearSpot = smearSlideVisual?.querySelector('.smear-spot'); // Added safety check
             const prepFeedback = document.getElementById('prep-feedback');
             const fixSlideButton = document.getElementById('fixSlideButton');
             const goToStainButton = document.getElementById('goToStainButton');
             const reagentsContainer = document.getElementById('reagents');
             const slideDropzone = document.getElementById('slide-dropzone');
-            const dropInstructionText = slideDropzone.querySelector('.drop-instruction');
+            const dropInstructionText = slideDropzone?.querySelector('.drop-instruction'); // Added safety check
             const stainStatus = document.getElementById('stain-status');
             const stainedArea = document.getElementById('stained-area');
             const microscopeImage = document.getElementById('microscope-image');
@@ -342,7 +273,7 @@
             // --- Functions ---
 
             function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } }
-            function randomizeReagents() { const currentReagents = Array.from(reagentsContainer.querySelectorAll('.reagent')); shuffleArray(currentReagents); reagentsContainer.innerHTML = ''; currentReagents.forEach(reagent => reagentsContainer.appendChild(reagent)); }
+            function randomizeReagents() { if (!reagentsContainer) return; const currentReagents = Array.from(reagentsContainer.querySelectorAll('.reagent')); shuffleArray(currentReagents); reagentsContainer.innerHTML = ''; currentReagents.forEach(reagent => reagentsContainer.appendChild(reagent)); }
             function showScreen(screenId) { screens.forEach(screen => screen.classList.toggle('active', screen.id === screenId)); }
             function showUserFeedback(element, message, type = 'success', duration = 2500) { if(!element) return; element.textContent = message; element.className = `${element.id} ${type}`; element.style.opacity = 1; void element.offsetWidth; setTimeout(() => { if (element.textContent === message) { element.style.opacity = 0; setTimeout(() => { if(element.style.opacity === '0') element.className = `${element.id}`; }, 500); } }, duration); }
 
@@ -357,10 +288,13 @@
              function handlePrepDragLeave(event) {
                   const potentialTarget = event.target.closest('#prep-bottle-container, #smear-graphic-target');
                   if(potentialTarget && !potentialTarget.contains(event.relatedTarget)) { potentialTarget.classList.remove('drag-over-target'); }
-                  if (!event.relatedTarget) { prepBottleContainer.classList.remove('drag-over-target'); smearGraphicTarget.classList.remove('drag-over-target'); }
+                  if (!event.relatedTarget) {
+                       if(prepBottleContainer) prepBottleContainer.classList.remove('drag-over-target');
+                       if(smearGraphicTarget) smearGraphicTarget.classList.remove('drag-over-target');
+                    }
              }
             function handleSmearDrop(event) {
-                 event.preventDefault(); prepBottleContainer.classList.remove('drag-over-target'); smearGraphicTarget.classList.remove('drag-over-target');
+                 event.preventDefault(); if(prepBottleContainer) prepBottleContainer.classList.remove('drag-over-target'); if(smearGraphicTarget) smearGraphicTarget.classList.remove('drag-over-target');
                  const droppedItemId = event.dataTransfer.getData('text/plain'); const expectedItemId = CORRECT_PREP_ORDER[currentPrepStep]; const droppedElement = document.getElementById(droppedItemId); const originalDraggedPrepId = draggedPrepItemId; draggedPrepItemId = null;
                  if (!droppedElement || !originalDraggedPrepId || droppedItemId !== originalDraggedPrepId || droppedElement.classList.contains('used')) { console.warn("Prep Drop invalid."); const originalElem = document.getElementById(originalDraggedPrepId); if(originalElem && !originalElem.classList.contains('used')) originalElem.style.opacity = '1'; return; }
                  let actualTargetElement = event.target.closest('#prep-bottle-container, #smear-graphic-target'); let expectedTargetId = (currentPrepStep < 2) ? 'prep-bottle-container' : 'smear-graphic-target';
@@ -369,7 +303,7 @@
                      let feedbackMsg = "", nextStepMsg = "";
                      if (currentPrepStep === 1) { feedbackMsg = "Bottle wiped!"; nextStepMsg = "Step 2: Drag Needle to Bottle."; }
                      else if (currentPrepStep === 2) { feedbackMsg = "Bottle tapped!"; nextStepMsg = "Step 3: Drag Bottle to Slide Area."; prepBottleContainer.classList.remove('used'); prepBottleContainer.setAttribute('draggable', 'true'); prepBottleContainer.style.opacity = '1'; smearGraphicTarget.classList.add('visible'); }
-                     else if (currentPrepStep === 3) { feedbackMsg = "Smear applied!"; nextStepMsg = "Prep complete!"; smearSpot.classList.add('visible'); prepBottleContainer.classList.add('used'); prepBottleContainer.style.opacity = '0.4'; prepBottleContainer.setAttribute('draggable', 'false'); }
+                     else if (currentPrepStep === 3) { feedbackMsg = "Smear applied!"; nextStepMsg = "Prep complete!"; if(smearSpot) smearSpot.classList.add('visible'); prepBottleContainer.classList.add('used'); prepBottleContainer.style.opacity = '0.4'; prepBottleContainer.setAttribute('draggable', 'false'); }
                      showUserFeedback(prepFeedback, feedbackMsg, 'success', 1500); setTimeout(() => { prepFeedback.textContent = nextStepMsg; prepFeedback.className = 'prep-feedback'; prepFeedback.style.opacity = 1; if (currentPrepStep === CORRECT_PREP_ORDER.length) { setTimeout(() => showScreen('fix-instruction-screen'), 1000); } }, 1600);
                  } else {
                      droppedElement.style.opacity = '1'; let errorMsg = "Try again!"; if (droppedItemId !== expectedItemId) { const expectedElem = document.getElementById(expectedItemId); errorMsg = `Wrong item! Drag the ${expectedElem?.querySelector('.prep-label')?.textContent || 'correct item'}.`; } else { const expectedTargetElem = document.getElementById(expectedTargetId); errorMsg = `Drop it onto the ${expectedTargetElem?.id === 'smear-graphic-target' ? 'Slide Area' : 'BC Bottle'}!`; }
@@ -378,35 +312,35 @@
              }
 
             // --- Staining Phase Drag/Drop Handlers ---
-            function handleDragStart(event) { // Unified Handler
+            function handleDragStart(event) {
                 const item = event.target.closest('.prep-item, .reagent'); if (!item || item.classList.contains('used') || item.getAttribute('draggable') === 'false') { event.preventDefault(); return; }
                 if (item.classList.contains('prep-item')) { draggedPrepItemId = item.id; event.dataTransfer.setData('text/plain', draggedPrepItemId); event.dataTransfer.effectAllowed = 'move'; setTimeout(() => item.style.opacity = '0.7', 0); }
                 else if (item.classList.contains('reagent')) { draggedReagentId = item.id; event.dataTransfer.setData('text/plain', draggedReagentId); event.dataTransfer.effectAllowed = 'move'; setTimeout(() => item.style.opacity = '0.7', 0); }
             }
-            function handleDragEnd(event) { // Unified Handler
-                 prepBottleContainer.classList.remove('drag-over-target'); smearGraphicTarget.classList.remove('drag-over-target'); slideDropzone.classList.remove('drag-over');
+            function handleDragEnd(event) {
+                 if(prepBottleContainer) prepBottleContainer.classList.remove('drag-over-target');
+                 if(smearGraphicTarget) smearGraphicTarget.classList.remove('drag-over-target');
+                 if(slideDropzone) slideDropzone.classList.remove('drag-over');
                  if (dropInstructionText) dropInstructionText.style.color = 'rgba(0, 0, 0, 0.5)';
                  const prepElem = document.getElementById(draggedPrepItemId); if (draggedPrepItemId && prepElem && !prepElem.classList.contains('used')) { prepElem.style.opacity = '1'; }
                  const reagentElem = document.getElementById(draggedReagentId); if (draggedReagentId && reagentElem && !reagentElem.classList.contains('used')) { reagentElem.style.opacity = '1'; }
                  draggedPrepItemId = null; draggedReagentId = null;
              }
-            function handleStainDragOver(event) { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; slideDropzone.classList.add('drag-over'); if (dropInstructionText) dropInstructionText.style.color = 'rgba(0, 86, 179, 0.8)'; }
-            function handleStainDragLeave(event) { if (event.target === slideDropzone || !slideDropzone.contains(event.relatedTarget)) { slideDropzone.classList.remove('drag-over'); if (dropInstructionText) dropInstructionText.style.color = 'rgba(0, 0, 0, 0.5)'; } }
-            // UPDATED Stain Drop Handler
+            function handleStainDragOver(event) { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; if(slideDropzone) slideDropzone.classList.add('drag-over'); if (dropInstructionText) dropInstructionText.style.color = 'rgba(0, 86, 179, 0.8)'; }
+            function handleStainDragLeave(event) { if (slideDropzone && (event.target === slideDropzone || !slideDropzone.contains(event.relatedTarget))) { slideDropzone.classList.remove('drag-over'); if (dropInstructionText) dropInstructionText.style.color = 'rgba(0, 0, 0, 0.5)'; } }
             function handleStainDrop(event) {
-                 event.preventDefault(); slideDropzone.classList.remove('drag-over'); if (dropInstructionText) dropInstructionText.style.color = 'rgba(0, 0, 0, 0.5)';
+                 event.preventDefault(); if(slideDropzone) slideDropzone.classList.remove('drag-over'); if (dropInstructionText) dropInstructionText.style.color = 'rgba(0, 0, 0, 0.5)';
                  const droppedReagentIdLocal = event.dataTransfer.getData('text/plain'); const expectedReagentId = CORRECT_STAIN_ORDER[currentStainStep]; const droppedElement = document.getElementById(droppedReagentIdLocal); const originallyDraggedId = draggedReagentId; draggedReagentId = null;
-                 if (dropInstructionText) dropInstructionText.style.display = 'none'; slideDropzone.classList.add('has-content');
+                 if (dropInstructionText) dropInstructionText.style.display = 'none'; if(slideDropzone) slideDropzone.classList.add('has-content');
                  if (!droppedElement || !originallyDraggedId || droppedElement.id !== originallyDraggedId || droppedElement.classList.contains('used')) { console.warn("Stain Drop issue."); const originalElem = document.getElementById(originallyDraggedId); if(originalElem && !originalElem.classList.contains('used')) originalElem.style.opacity = '1'; return; }
 
                  if (droppedReagentIdLocal === expectedReagentId) {
                      const reagentName = droppedElement.querySelector('.reagent-label').textContent; showUserFeedback(stainStatus, `${reagentName} applied correctly!`, 'success');
                      let colorToApply = STAIN_COLORS[expectedReagentId];
                      if (expectedReagentId === 'reagent-decolorizer') {
-                         const retainedColor = STAIN_COLORS['reagent-iodine']; stainedArea.style.transition = 'background-color 0.3s ease-out'; stainedArea.style.backgroundColor = 'rgba(106, 13, 173, 0.3)';
-                         setTimeout(() => { stainedArea.style.transition = 'background-color 0.5s ease'; stainedArea.style.backgroundColor = retainedColor; }, 400);
+                         const retainedColor = STAIN_COLORS['reagent-iodine']; if(stainedArea){ stainedArea.style.transition = 'background-color 0.3s ease-out'; stainedArea.style.backgroundColor = 'rgba(106, 13, 173, 0.3)'; setTimeout(() => { stainedArea.style.transition = 'background-color 0.5s ease'; stainedArea.style.backgroundColor = retainedColor; }, 400); }
                          colorToApply = null;
-                     } else if (colorToApply) {
+                     } else if (colorToApply && stainedArea) {
                          stainedArea.style.transition = 'background-color 0.5s ease'; stainedArea.style.backgroundColor = colorToApply;
                      }
                      droppedElement.classList.add('used'); droppedElement.setAttribute('draggable', 'false'); droppedElement.style.opacity = '0.4'; currentStainStep++;
@@ -414,37 +348,14 @@
                  } else { console.log(`Incorrect stain drop: Expected ${expectedReagentId}, Got ${droppedReagentIdLocal}`); droppedElement.style.opacity = '1'; showFailure(false); }
              }
 
-
-            // Reset Prep Phase visuals - CORRECTED AGAIN
+            // Reset Prep Phase visuals
             function resetPrepVisuals() {
-                 prepItems.forEach(item => {
-                    if(item) { // Check item exists
-                         item.classList.remove('used');
-                         item.setAttribute('draggable', 'true');
-                         item.style.opacity = '1';
-                    } else { console.warn("Tried to reset non-existent prep item"); }
-                 });
-                 // Reset bottle draggable specifically
-                 if(prepBottleContainer) {
-                     prepBottleContainer.setAttribute('draggable', 'true');
-                 } else { console.warn("Prep bottle container not found during reset"); }
-
+                 prepItems.forEach(item => { if(item) { item.classList.remove('used'); item.setAttribute('draggable', 'true'); item.style.opacity = '1'; }});
+                 if(prepBottleContainer) prepBottleContainer.setAttribute('draggable', 'true');
                  currentPrepStep = 0;
-                 if(prepFeedback) {
-                     prepFeedback.textContent = 'Step 1: Drag Wipe to Bottle.';
-                     prepFeedback.className = 'prep-feedback';
-                     prepFeedback.style.opacity = 1;
-                 } else { console.warn("Prep feedback element not found during reset"); }
-
-                 if(smearGraphicTarget) {
-                     smearGraphicTarget.classList.remove('visible');
-                      smearGraphicTarget.classList.remove('has-content'); // Ensure this is reset too if it exists
-                 } else { console.warn("Smear graphic target not found during reset"); }
-
-                 if(smearSpot) {
-                     smearSpot.classList.remove('visible');
-                 } else { console.warn("Smear spot element not found during reset"); }
-                 // No separate instruction p tag inside smearGraphicTarget anymore
+                 if(prepFeedback) { prepFeedback.textContent = 'Step 1: Drag Wipe to Bottle.'; prepFeedback.className = 'prep-feedback'; prepFeedback.style.opacity = 1; }
+                 if(smearGraphicTarget) smearGraphicTarget.classList.remove('visible');
+                 if(smearSpot) smearSpot.classList.remove('visible');
             }
 
             // Reset Stain Phase visuals
@@ -481,29 +392,25 @@
             }
 
             // --- Event Listeners Setup ---
-            startButton.addEventListener('click', () => {
+             startButton.addEventListener('click', () => {
                  console.log("Start button clicked."); // Log 1
                  const name = playerNameInput.value.trim();
                  if (name) {
                      currentPlayerName = name;
                      console.log("Name valid, calling resets..."); // Log 2
                      try {
-                         resetPrepVisuals();
-                         console.log("resetPrepVisuals completed."); // Log 3
-                         resetStainVisuals();
-                         console.log("resetStainVisuals completed."); // Log 4
-                         console.log("Showing shift-start-screen..."); // Log 5
-                         showScreen('shift-start-screen');
-                         setTimeout(() => { console.log("Showing alert-screen"); showScreen('alert-screen'); }, 1500);
-                         setTimeout(() => { console.log("Showing prepare-smear-screen"); showScreen('prepare-smear-screen'); }, 4000);
-                     } catch (error) {
-                         console.error("Error during startup sequence:", error); // Catch any errors
-                         alert("An error occurred starting the game. Please check the console.");
-                     }
-                 } else {
-                     alert('Please enter your name!');
-                 }
-            });
+                          // Check core elements needed for reset/startup
+                          if (!prepItems.every(el => el) || !prepFeedback || !smearGraphicTarget || !smearSpot) { console.error("One or more PREP elements missing before reset!"); alert("Game setup error (Prep). Please check console."); return; }
+                          if (!reagentsContainer || !stainedArea || !stainStatus || !slideDropzone || !dropInstructionText) { console.error("One or more STAIN elements missing before reset!"); alert("Game setup error (Stain). Please check console."); return; }
+
+                          resetPrepVisuals(); console.log("resetPrepVisuals completed.");
+                          resetStainVisuals(); console.log("resetStainVisuals completed.");
+                          console.log("Showing shift-start-screen..."); showScreen('shift-start-screen');
+                          setTimeout(() => { console.log("Showing alert-screen"); showScreen('alert-screen'); }, 1500);
+                          setTimeout(() => { console.log("Showing prepare-smear-screen"); showScreen('prepare-smear-screen'); }, 4000);
+                     } catch (error) { console.error("Error during startup sequence:", error); alert("An error occurred starting the game. Please check the console (F12)."); }
+                 } else { alert('Please enter your name!'); }
+             });
             // Prep Phase Listeners
             prepItems.forEach(item => item.addEventListener('dragstart', handleDragStart));
             prepBottleContainer.addEventListener('dragover', handlePrepDragOver); prepBottleContainer.addEventListener('dragleave', handlePrepDragLeave); prepBottleContainer.addEventListener('drop', handleSmearDrop);
